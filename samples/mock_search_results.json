@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Mock Da Nang Beach Hotel",
+    "price_vnd": 1500000,
+    "destination": "Da Nang",
+    "guest_capacity": 2,
+    "amenities": ["pool"],
+    "location_tags": ["near beach"],
+    "property_type": "hotel",
+    "source_quality": 0.7
+  }
+]

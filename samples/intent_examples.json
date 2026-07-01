@@ -1,0 +1,7 @@
+[
+  {
+    "raw_query": "Tim phong khach san Da Nang cho 2 nguoi, gan bien, 1-2 trieu, co ho boi",
+    "expected_destination": "Da Nang",
+    "expected_price_class_label": "mid_range"
+  }
+]

@@ -1,0 +1,48 @@
+# Local agent/runtime state
+.agents/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local env files
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter / notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Project-generated data and reports
+ML_core/data/
+ML_core/reports/
+reports/recommendation/*
+!reports/recommendation/.gitkeep
+
+# Generated model artifacts
+ML_core/models/**/*.joblib
