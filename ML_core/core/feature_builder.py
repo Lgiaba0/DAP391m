@@ -25,4 +25,5 @@ class FeatureBuilder:
             property_type_resort=int("resort" in property_types),
             expand_budget=price_band.confidence < LOW_CONFIDENCE_THRESHOLD,
             raw_query=intent.raw_query,
+            model_input_features=dict(price_band.model_input_features),
         )

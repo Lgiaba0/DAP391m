@@ -29,6 +29,7 @@ class PriceBandPrediction:
     confidence: float
     price_min_vnd: float | None = None
     price_max_vnd: float | None = None
+    model_input_features: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -53,6 +54,7 @@ class SearchFeatureVector:
     property_type_resort: int = 0
     expand_budget: bool = False
     raw_query: str = ""
+    model_input_features: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
