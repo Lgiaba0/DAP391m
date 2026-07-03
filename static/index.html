@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DAP391m Search Console</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">DAP391m</p>
+        <h1>Intent to recommendation</h1>
+        <p class="intro">
+          Nhap truy van de goi pipeline, xem phan tich intent, price band, va danh sach goi y.
+        </p>
+      </section>
+
+      <section class="panel">
+        <form id="search-form" class="search-form">
+          <label class="field">
+            <span>Truy van</span>
+            <textarea
+              id="query-input"
+              name="query"
+              rows="3"
+              placeholder="Khach san Da Nang gan bien 2 nguoi 1-2 trieu co ho boi"
+            ></textarea>
+          </label>
+          <div class="actions">
+            <button id="submit-button" type="submit">Goi API</button>
+            <p id="status-text" class="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <div class="section-heading">
+            <h2>Intent</h2>
+            <span id="provider-badge" class="badge">provider: unknown</span>
+          </div>
+          <pre id="intent-output" class="json-block empty">Chua co du lieu.</pre>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading">
+            <h2>Price band</h2>
+          </div>
+          <pre id="price-output" class="json-block empty">Chua co du lieu.</pre>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Recommendations</h2>
+          <span id="result-count" class="badge">0 items</span>
+        </div>
+        <div id="results" class="results empty-state">
+          Chua co ket qua. Submit query de xem response that tu pipeline.
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

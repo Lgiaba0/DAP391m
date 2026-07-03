@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Travely AI Concierge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script id="tailwind-config">
+    try {
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "deep-space": "#101010",
+              "soft-text": "rgba(255, 255, 255, 0.62)",
+              "bright-text": "#f2f4ff",
+              "accent": "#00E5FF",
+            },
+            fontFamily: {
+              body: ["Inter", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    } catch (_error) {}
+  </script>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      color-scheme: dark;
+    }
+
+    .chat-shell {
+      position: relative;
+      background: rgba(35, 35, 35, 0.92);
+      border-radius: 999px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(16px);
+      isolation: isolate;
+      transition: box-shadow 220ms ease, transform 220ms ease, filter 220ms ease;
+    }
+
+    .chat-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899, #F97316, #EAB308, #22C55E, #00E5FF, #3B82F6);
+      background-size: 220% auto;
+      animation: rainbowFlow 6s linear infinite;
+      opacity: 0.9;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .chat-shell[data-busy="true"] {
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.42),
+        0 0 24px rgba(0, 229, 255, 0.18),
+        0 0 48px rgba(139, 92, 246, 0.2);
+      filter: saturate(1.12) brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .chat-shell[data-busy="true"]::before {
+      opacity: 1;
+      animation-duration: 2.2s;
+    }
+
+    .result-shell {
+      background: rgba(15, 15, 15, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .thinking-shell {
+      position: relative;
+      background: rgba(15, 15, 15, 0.78);
+      border-radius: 22px;
+      isolation: isolate;
+      backdrop-filter: blur(16px);
+    }
+
+    .thinking-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899, #F97316, #EAB308, #22C55E, #00E5FF, #3B82F6);
+      background-size: 220% auto;
+      animation: rainbowFlow 4s linear infinite;
+      opacity: 0.95;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    @keyframes rainbowFlow {
+      0% {
+        background-position: 0% center;
+      }
+      100% {
+        background-position: 220% center;
+      }
+    }
+  </style>
+</head>
+<body
+  class="min-h-screen overflow-y-auto overflow-x-hidden bg-deep-space text-bright-text"
+  style="background-image: url('/spaceX_AI.png'); background-size: cover; background-position: center center; background-repeat: no-repeat; background-attachment: fixed;"
+>
+  <main class="relative flex min-h-screen items-center justify-center py-12 px-6">
+    <div class="w-full max-w-5xl -translate-y-[8vh]">
+      <div class="mx-auto max-w-4xl text-center">
+        <h1 id="greeting-title" class="text-4xl font-medium tracking-tight text-white sm:text-5xl md:text-6xl">
+          Chúng ta nên bắt đầu từ đâu nhỉ?
+        </h1>
+      </div>
+
+      <div class="mx-auto mt-10 max-w-4xl">
+        <form id="request-form" class="chat-shell flex items-center gap-3 rounded-full px-5 py-4 sm:px-6" data-busy="false">
+          <button class="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:text-white" type="button" aria-label="Add">
+            <span class="material-symbols-outlined text-[30px]">add</span>
+          </button>
+
+          <input
+            id="query-input"
+            class="flex-1 border-none bg-transparent px-0 text-lg text-white placeholder:text-white/45 focus:ring-0"
+            placeholder="Hỏi Travely AI"
+            type="text"
+            value=""
+          />
+
+          <div class="hidden items-center gap-3 sm:flex">
+            <div id="backend-status-chip" class="rounded-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">
+              Checking
+            </div>
+            <button id="refresh-health-button" class="text-soft-text transition hover:text-white" type="button" aria-label="Mic">
+              <span class="material-symbols-outlined text-[24px]">mic</span>
+            </button>
+          </div>
+
+          <button
+            id="submit-button"
+            class="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-black shadow-[0_0_18px_rgba(0,229,255,0.28)] transition hover:scale-105"
+            type="submit"
+            aria-label="Send"
+          >
+            <span class="material-symbols-outlined">send</span>
+          </button>
+        </form>
+
+        <div class="hidden">
+          <span id="request-status">Sẵn sàng</span>
+          <span id="api-base">http://127.0.0.1:5000</span>
+          <span id="search-provider">Checking...</span>
+        </div>
+
+        <section id="results-panel" class="result-shell mx-auto mt-6 hidden max-w-4xl rounded-[28px] p-5 sm:p-6">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="text-lg font-semibold text-white">Kết quả từ backend</h2>
+            <div id="results-meta" class="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">0 items</div>
+          </div>
+
+          <p id="results-message" class="mt-4 text-sm leading-7 text-soft-text">
+            Chưa có dữ liệu.
+          </p>
+
+          <div id="results-grid" class="mt-5 grid gap-4"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

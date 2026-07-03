@@ -76,8 +76,52 @@ def _extract_budget(text: str) -> tuple[float | None, float | None]:
     return None, None
 
 
+import os
+import json
+from agents.openrouter_client import call_openrouter
+
 class IntentParser:
     def parse(self, raw_query: str) -> IntentRequest:
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if api_key:
+            model = os.environ.get("OPENROUTER_INTENT_MODEL", "google/gemini-2.5-flash")
+            prompt = (
+                "You are a structured intent extractor for a travel search engine in Vietnam.\n"
+                "Analyze the user's travel query and extract details into a JSON object matching this schema:\n"
+                "{\n"
+                "  \"destination\": string or null (extract normalized name: \"Da Nang\", \"Nha Trang\", \"Ho Chi Minh City\", \"Ha Noi\", \"Da Lat\", \"Phu Quoc\"),\n"
+                "  \"guest_count\": integer or null,\n"
+                "  \"budget_min_vnd\": number or null,\n"
+                "  \"budget_max_vnd\": number or null,\n"
+                "  \"amenities\": array of strings (subset of: [\"pool\", \"breakfast\", \"beach\"]),\n"
+                "  \"location_preferences\": array of strings (subset of: [\"near beach\", \"near center\"]),\n"
+                "  \"property_types\": array of strings (subset of: [\"hotel\", \"apartment\", \"resort\"])\n"
+                "}\n\n"
+                f"Query: \"{raw_query}\"\n\n"
+                "Provide ONLY the raw JSON object, no explanation, no markdown blocks."
+            )
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+            try:
+                response_text = call_openrouter(model, messages, json_mode=False)
+                from agents.openrouter_client import extract_json_from_text
+                cleaned_text = extract_json_from_text(response_text)
+                data = json.loads(cleaned_text)
+                return IntentRequest(
+                    raw_query=raw_query,
+                    destination=data.get("destination"),
+                    guest_count=data.get("guest_count"),
+                    budget_min_vnd=data.get("budget_min_vnd"),
+                    budget_max_vnd=data.get("budget_max_vnd"),
+                    amenities=list(data.get("amenities") or []),
+                    location_preferences=list(data.get("location_preferences") or []),
+                    property_types=list(data.get("property_types") or []),
+                )
+            except Exception as e:
+                # Log and fallback to regex parser below
+                print(f"OpenRouter intent parsing failed, falling back to regex: {e}")
+
         normalized = raw_query.lower()
         budget_min, budget_max = _extract_budget(normalized)
 
