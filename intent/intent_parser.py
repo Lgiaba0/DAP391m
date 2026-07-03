@@ -1,6 +1,12 @@
 import re
+import unicodedata
 
 from ML_core.core.schemas import IntentRequest
+
+
+def _remove_diacritics(text: str) -> str:
+    nfd = unicodedata.normalize("NFD", text)
+    return "".join(c for c in nfd if unicodedata.category(c) != "Mn").replace("đ", "d").replace("Đ", "D")
 
 
 AMENITY_KEYWORDS = {
@@ -122,7 +128,7 @@ class IntentParser:
                 # Log and fallback to regex parser below
                 print(f"OpenRouter intent parsing failed, falling back to regex: {e}")
 
-        normalized = raw_query.lower()
+        normalized = _remove_diacritics(raw_query.lower())
         budget_min, budget_max = _extract_budget(normalized)
 
         destination = None

@@ -41,16 +41,23 @@ def call_openrouter(model: str, messages: list[dict[str, str]], json_mode: bool 
 def extract_json_from_text(text: str) -> str:
     text_stripped = text.strip()
     
-    # Look for the first '[' and last ']' for array
-    first_bracket = text_stripped.find('[')
-    last_bracket = text_stripped.rfind(']')
-    if first_bracket != -1 and last_bracket != -1 and last_bracket > first_bracket:
-        return text_stripped[first_bracket:last_bracket+1]
-        
-    # Look for the first '{' and last '}' for object
     first_brace = text_stripped.find('{')
     last_brace = text_stripped.rfind('}')
-    if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+    
+    first_bracket = text_stripped.find('[')
+    last_bracket = text_stripped.rfind(']')
+    
+    has_brace = (first_brace != -1 and last_brace != -1 and last_brace > first_brace)
+    has_bracket = (first_bracket != -1 and last_bracket != -1 and last_bracket > first_bracket)
+    
+    if has_brace and has_bracket:
+        if first_brace < first_bracket:
+            return text_stripped[first_brace:last_brace+1]
+        else:
+            return text_stripped[first_bracket:last_bracket+1]
+    elif has_brace:
         return text_stripped[first_brace:last_brace+1]
+    elif has_bracket:
+        return text_stripped[first_bracket:last_bracket+1]
         
     return text_stripped
